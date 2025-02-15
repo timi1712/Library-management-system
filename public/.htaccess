@@ -1,0 +1,16 @@
+# Enable URL rewriting
+RewriteEngine On
+
+# Redirect all requests to index.php (for Router.php)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?page=$1 [QSA,L]
+
+# Block direct access to config.php
+# <Files "config.php">
+#     Order Allow,Deny
+#     Deny from all
+# </Files>
+
+# # Prevent access to .git directory
+# RedirectMatch 403 /\.git
