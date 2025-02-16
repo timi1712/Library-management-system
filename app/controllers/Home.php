@@ -1,3 +1,11 @@
 <?php
-echo"<h1>Home page.</h1>";
+
+class Home
+{
+    use Controller;
+    public function index() {
+        $data['content'] = $this->view("home", [], true);
+        $this->view("layouts/main", $data);
+    }
+}
 ?>
