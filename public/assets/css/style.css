@@ -1,0 +1,39 @@
+/* The overlay effect with black background */
+
+a.navbar-brand {
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
+}
+
+
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+.section-notfound {
+    background: #f3f3f3
+  }
+
+html {
+    font-size: 14px;
+}
+/* custom color*/
+
+
+.custom-bg {
+    background-color: #055160 !important;
+}
+#registerSubmit {
+    border-style: groove !important;
+    color: #fff !important;
+}
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px;
+  }

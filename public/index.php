@@ -1,9 +1,14 @@
 <?php 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 
 session_start();
 
 // Load core init file dynamically
 require_once dirname(__DIR__) . "/app/core/init.php";
+// echo "DEBUG: URL = " . ($_GET['url'] ?? 'NOT SET');
+// exit;
 
 // Set error reporting based on DEBUG mode
 if (DEBUG) {

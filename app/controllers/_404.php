@@ -1,3 +1,12 @@
 <?php
-echo"<h1> pag not found!</h1>";
+
+class _404
+{
+    use controller;
+
+    public function index()
+    {
+        $this->view("errors/404");
+    }
+}
 ?>
