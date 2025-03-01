@@ -1,28 +1,79 @@
-/* The overlay effect with black background */
+ /* Ensure full height for the page */
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
 
-a.navbar-brand {
-    white-space: normal;
+/* Main content takes available space */
+.main-content {
+    flex: 1;
+}
+
+/* Footer styles */
+footer {
+    background-color: #343a40; /* Dark background */
+    color: white;
     text-align: center;
-    word-break: break-all;
+    padding: 10px 0;
+    width: 100%;
+    position: relative; /* Default for small screens */
 }
 
-
-
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
+/* Sticky footer for large screens */
+@media (min-width: 768px) {
+    footer {
+        position: fixed;
+        bottom: 0;
+    }
 }
-.section-notfound {
-    background: #f3f3f3
-  }
 
-html {
-    font-size: 14px;
-}
 /* custom color*/
+.custom-shadow {
+    border: 2px solid #2bb1b1;
+    background-color: #f3f3f8;
+    box-shadow: 15px 10px 10px rgba(5, 81, 96, 0.9); 
+    
+}
+.bg {
+    background-color: #87a8a8;
+}
+.ct-content {
+    text-align: center !important;
+}
+.shadow {
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+}
+.bi-geo-alt::before {
+    content: "\f3e8";
+}
+.rm {
+    text-decoration: none!important;
+}
+.bi::before, [class^="bi-"]::before, [class*=" bi-"]::before {
+    display: inline-block;
+    font-family: bootstrap-icons !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    vertical-align: -0.125em;
+}
+.custom-modal {
+    border-radius: 18px; /* Rounded corners */
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2); /* Soft shadow */
+    overflow: hidden; /* Prevents content from overflowing rounded corners */
+}
 
-
+.my-color {
+    color: #055160;
+}
+.custom-btn {
+    color: #fff;
+    border-color: #f4f4f4;
+}
 .custom-bg {
     background-color: #055160 !important;
 }
@@ -30,10 +81,15 @@ html {
     border-style: groove !important;
     color: #fff !important;
 }
-.footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    white-space: nowrap;
-    line-height: 60px;
-  }
+
+  /* logo */
+  .logo-text {
+    font-size: 1.5rem; /* Adjust size */
+    font-weight: bold;
+    color: #ffffff; /* Text color */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7), 
+                 4px 4px 10px rgba(0, 0, 0, 0.5), 
+                 6px 6px 15px rgba(0, 0, 0, 0.3); /* 3D shadow effect */
+    letter-spacing: 2px; /* Adds spacing for better 3D effect */
+    text-transform: uppercase; /* Optional: Makes text uppercase */
+}

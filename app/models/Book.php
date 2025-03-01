@@ -19,4 +19,16 @@ class Book extends Model
         $data['id'] = $id;
         return $this->db->query($sql, $data);
     }
+
+    public function getBooksByCategory($categoryId)
+    {
+        return $this->query("SELECT * FROM books WHERE category_id = ?", [$categoryId]);
+    }
+
+    public function searchBooks($query)
+    {
+        $sql = "SELECT * FROM books WHERE title LIKE :query OR author LIKE :query";
+        return $this->query($sql, [':query' => "%$query%"]);
+    }
+
 }

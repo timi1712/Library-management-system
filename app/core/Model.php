@@ -32,8 +32,6 @@ abstract class Model
 
     public function get_row($query, $data = [])
     {
-        // $stmt = $this->query($query, $data);
-        // return $stmt ? $stmt->fetch(PDO::FETCH_OBJ) : false;
         $stmt = $this->db->query($query, $data);
         return $stmt ? $stmt->fetch(PDO::FETCH_OBJ) : false;
     }

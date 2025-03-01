@@ -42,14 +42,17 @@ class Auth
     }
     public function logout()
     {
-        session_destroy();
-        redirect("auth/login");
+        session_start();  // Ensure session is active
+        session_unset();  // Remove all session variables
+        session_destroy(); // Destroy the session
+        // Redirect to home page
+        redirect("/home"); 
     }
 
     public function authenticate()
     {
         $errors = [];
-        $userModel = new UserModel();
+        $userModel = new User();
 
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $email = trim($_POST["email"]);
@@ -68,20 +71,27 @@ class Auth
                 // Store user session
                 $_SESSION["user_id"] = $user["id"];
                 $_SESSION["user_role"] = $user["role"];
+                $_SESSION["user_name"] = $user["name"]; // Store name for navbar display
 
-                // Redirect based on role
-                if ($user["role"] === "admin") {
-                    redirect("admin/dashboard");
-                } else {
-                    redirect("home");
-                }
+            if ($user['role'] === 'admin') {
+                header("Location: " . ROOT . "/admin/dashboard");
+            } else {
+                header("Location: " . ROOT . "/home");
             }
+            exit;
+            
+        } else {
+            # code...
+            //$_SESSION["login_error"] = "Invalid email or password.";
+            $_SESSION["login_error"] = implode("<br>", $errors);
+            $_SESSION["show_login_modal"] = true; // Set modal to open on reload
+            header("Location: " . ROOT . "/home"); // Redirect to reload page
+            //header("Location: " . $_SERVER["HTTP_REFERER"]); // Redirect back to login page
+            exit;
         }
-
-        // Reload login view with errors
-        $this->view("auth/login", ["errors" => $errors]);
+        
     }
-
+    }
 
     public function store()
     {
@@ -101,79 +111,58 @@ class Auth
                 $errors[] = $usernameValidation;
             }
 
-            // Validate full name
-            if (empty($full_name)) {
-                $errors[] = "Full name is required.";
-            }
-
-        
-            // Validation
+            // Check required fields
             if (empty($full_name) || empty($email) || empty($password) || empty($confirm_password)) {
                 $errors[] = "All fields are required.";
             }
 
+            // Validate email
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $errors[] = "Invalid email format.";
-            }
-
-            if ($userModel->emailExists($email)) {
+            } elseif ($userModel->emailExists($email)) {
                 $errors[] = "Email is already registered.";
             }
 
+            // Validate password
             if ($password !== $confirm_password) {
                 $errors[] = "Passwords do not match.";
             }
 
+            // Validate role
             if (!in_array($role, ["admin", "user"])) {
                 $errors[] = "Invalid user role.";
             }
-            // Debugging: Print errors if they exist
-            // if (!empty($errors)) {
-            //     echo "<pre>";
-            //     print_r($errors);
-            //     echo "</pre>";
-            //     die(); // Stop execution for debugging
-            // }
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            //  // Debugging: Print data before inserting
-            // echo "<pre>";
-            // print_r([
-            //     "name" => $full_name,
-            //     "email" => $email,
-            //     "password" => $hashed_password,
-            //     "role" => $role
-            // ]);
-            // echo "</pre>";
-            // die(); // Stop execution for debugging
 
-             // Save user
-             $userModel->create([
-                "name" => $full_name,
+            // If errors exist, reload form with errors
+            if (!empty($errors)) {
+                $_SESSION["register_errors"] = $errors;
+                $_SESSION["register_data"] = [
+                    "full_name" => $full_name,
+                    "email" => $email,
+                    "role" => $role
+                ];
+                header("Location: " . ROOT . "/home"); // Redirect to home page
+                exit;
+            
+            }
+
+            // Hash password
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+            // Save user
+            $userModel->create([
+                "name" => $full_name, // Ensure this matches your DB column
                 "email" => $email,
                 "password" => $hashed_password,
                 "role" => $role
             ]);
 
-            if (empty($errors)) {
-                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-                // Save user
-                $userModel->create([
-                    "name" => $full_name,
-                    "email" => $email,
-                    "password" => $hashed_password,
-                    "role" => $role
-                ]);
-
-            //     // Redirect to login
-                redirect("auth/login");
-             }
-                // Redirect to login
-            //header("Location: " . BASE_URL . "/auth/login");
-            //exit;
+            // Redirect to login
+            redirect("auth/login");
         }
 
-        // Reload view with errors
+        // Reload view with errors (if any)
         $this->view("auth/register", ["errors" => $errors]);
     }
+
 }

@@ -9,4 +9,3 @@ class _404
         $this->view("errors/404");
     }
 }
-?>

@@ -29,4 +29,3 @@ define('APP_DESC', "");
 
 /** true means show errors **/
 define('DEBUG', true);
-

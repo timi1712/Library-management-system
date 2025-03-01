@@ -18,7 +18,6 @@ class App
     {
         $URL = $this->splitUrl();
         # convert controller filename to lowercase
-        //$controllerName = ucfirst(strtolower($URL[0]));
         $controllerName = str_replace('-', '', ucfirst(strtolower($URL[0])));
         $baseDir = dirname(__DIR__);  // Store the base directory
         $controllerFile = $baseDir . "/controllers/" . $controllerName .".php";

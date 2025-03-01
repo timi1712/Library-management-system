@@ -35,14 +35,10 @@ class Database
     {
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
-
-        // Automatically return results for SELECT queries
-        if (stripos($sql, 'SELECT') === 0) {
-            return $stmt->fetchAll();
-        }
-
-        return $stmt->rowCount(); // Returns affected rows for other queries
+    
+        return $stmt; // Always return PDOStatement
     }
+    
 
     public function getRow($sql, $params = [])
     {
