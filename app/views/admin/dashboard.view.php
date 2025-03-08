@@ -12,7 +12,7 @@
                 <div class="card-body">
                     <i class="bi bi-book display-4 text-primary"></i>
                     <h5 class="mt-3">Total Books</h5>
-                    <h3><?= $totalBooks ?? 0; ?></h3>
+                    <h3><?= $bookCount ?? 0; ?></h3>
                 </div>
             </div>
         </div>

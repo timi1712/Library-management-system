@@ -13,6 +13,18 @@ class User extends Model
         }
         return $result;
     }
+    public function createUser($name, $email, $password, $role)
+    {
+        $data = [
+            'name' => $name,
+            'email' => $email,
+            'password' => $password, // Make sure it's hashed
+            'role' => $role
+        ];
+
+        return $this->insert($data); // This must be an array
+    }
+
 
     public function emailExists($email)
     {
@@ -57,6 +69,19 @@ class User extends Model
     public function deleteUser($id)
     {
         return $this->db->query("DELETE FROM users WHERE id = ?", [$id]);
+    }
+
+    public function getPaginatedUsers($limit, $offset)
+    {
+        $sql = "SELECT * FROM {$this->table} LIMIT $limit OFFSET $offset";
+        return $this->db->query($sql)->fetchAll();
+    }
+
+    public function getTotalUsers()
+    {
+        $sql = "SELECT COUNT(*) as total FROM {$this->table}";
+        $result = $this->get_row($sql);
+        return $result ? $result->total : 0;
     }
 
 }

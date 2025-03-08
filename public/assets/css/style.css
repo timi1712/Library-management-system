@@ -1,5 +1,5 @@
  /* Ensure full height for the page */
-html, body {
+ html, body {
     height: 100%;
     margin: 0;
     display: flex;
@@ -18,7 +18,8 @@ footer {
     text-align: center;
     padding: 10px 0;
     width: 100%;
-    position: relative; /* Default for small screens */
+    position: fixed; /* Default for small screens */
+    bottom: 0;
 }
 
 /* Sticky footer for large screens */
@@ -77,6 +78,12 @@ footer {
 .custom-bg {
     background-color: #055160 !important;
 }
+.custom-bg-light {
+    width: 100%;
+    background: var(--background-solid02, #F9F8F6);
+    padding: 48px;
+    box-sizing: border-box;
+}
 #registerSubmit {
     border-style: groove !important;
     color: #fff !important;
@@ -93,3 +100,24 @@ footer {
     letter-spacing: 2px; /* Adds spacing for better 3D effect */
     text-transform: uppercase; /* Optional: Makes text uppercase */
 }
+
+.pagination .page-link {
+    color: #fff; /* Text color */
+    background-color: #055160; /* Blue background */
+    border: 1px solid #227180; /* Blue border */
+    padding: 10px 15px; /* Increase padding */
+    margin: 5px;
+    border-radius: 8px; /* Rounded corners */
+    transition: all 0.3s ease-in-out;
+}
+
+.pagination .page-link:hover {
+    background-color: #4097a8; /* Darker blue on hover */
+    border-color: #055160;
+}
+
+.pagination .active .page-link {
+    background-color: #28a745; /* Green for active page */
+    border-color: #28a745;
+}
+

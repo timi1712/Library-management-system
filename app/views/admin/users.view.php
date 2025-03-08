@@ -21,8 +21,8 @@
     <!-- User Registration Form -->
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-body">
-            <h4 class="card-title">Add New User</h4>
-            <form action="<?= ROOT ?>/admin/users/store" method="POST">
+            <h4 class="card-title my-color">Add New User</h4>
+            <form action="<?= ROOT ?>/admin/storeUser" method="POST">
                 <div class="row">
                     <div class="col-md-4">
                         <label class="form-label">Full Name</label>
@@ -50,7 +50,7 @@
                         <input type="password" name="confirm_password" class="form-control" required>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-success mt-3">Add User</button>
+                <button type="submit" class="btn custom-bg text-white mt-3">Add User</button>
             </form>
         </div>
     </div>
@@ -58,9 +58,9 @@
     <!-- User List Table -->
     <div class="card shadow-sm border-0 mb-5">
         <div class="card-body">
-            <h4 class="card-title">User List</h4>
+            <h4 class="card-title my-color">User List</h4>
             <table class="table table-striped">
-                <thead class="table-dark">
+                <thead class="custom-bg text-white">
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
@@ -82,7 +82,6 @@
                             </td>
                             <td>
                                 <a href="<?= ROOT ?>/admin/edit/<?= $user['id']; ?>" class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
-                                <!-- <a href="<?= ROOT ?>/admin/delete/<?= $user['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">Delete</a> -->
                                 <button class="btn btn-danger btn-sm" onclick="confirmDelete(<?= $user['id']; ?>)">
                                     <i class="bi bi-trash"></i> Delete
                                 </button>
@@ -92,11 +91,42 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
+            <br/>
+            <div class="d-flex justify-content-center">
+                <!-- Pagination Controls -->
+                <nav>
+                    <ul class="pagination">
+                        <!-- Previous Button -->
+                        <li class="page-item <?= ($currentPage <= 1) ? 'disabled' : '' ?>">
+                            <a class="page-link" href="?page=<?= max(1, $currentPage - 1) ?>" aria-label="Previous">
+                                <i class="fas fa-angle-left"></i> <!-- Left arrow -->
+                            </a>
+                        </li>
+
+                        <!-- Page Numbers -->
+                        <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
+                            <li class="page-item <?= ($i == $currentPage) ? 'active' : '' ?>">
+                                <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <!-- Next Button -->
+                        <li class="page-item <?= ($currentPage >= $totalPages) ? 'disabled' : '' ?>">
+                            <a class="page-link" href="?page=<?= min($totalPages, $currentPage + 1) ?>" aria-label="Next">
+                                <i class="fas fa-angle-right"></i> <!-- Right arrow -->
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
         </div>
     </div>
+   
     </div>
     <div class="col-md-1"></div>
     </div>
 </div>
+
 
 <?php require_once dirname(__DIR__) . "/layouts/footer.view.php"; ?>

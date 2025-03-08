@@ -13,7 +13,7 @@ abstract class Model
 
     public function findAll()
     {
-        return $this->db->query("SELECT * FROM {$this->table}")->fetchAll();
+        return $this->db->query("SELECT * FROM {$this->table}")->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function findById($id)

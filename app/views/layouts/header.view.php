@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="<?= ROOT ?>/assets/css/bootstrap.min.css">
     <!-- fontawesome -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= ROOT ?>/assets/css/style.css">
@@ -16,6 +18,16 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <?php if (isset($_SESSION["show_login_modal"])): ?>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
+        });
+    </script>
+    <?php unset($_SESSION["show_login_modal"]); // Remove it after showing modal ?>
+<?php endif; ?>
+  
 
 </head>
 <body>
@@ -82,7 +94,7 @@
         </div>
     </nav>
     <div class="container mt-3">
-    <form action="<?= ROOT ?>/books/search" method="GET" class="d-flex">
+    <form action="<?= ROOT ?>/book/search" method="GET" class="d-flex">
         <input class="form-control me-2" type="text" name="query" placeholder="Search for books..." required>
         <button class="btn custom-bg text-white" type="submit">
         <span class="bi-search"></span>

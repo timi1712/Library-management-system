@@ -1,5 +1,6 @@
 <?php
 require_once dirname(__DIR__) . "/models/User.php"; 
+//require_once dirname(__DIR__) . "/models/Borrow.php";
 
 class Auth
 {
@@ -46,7 +47,7 @@ class Auth
         session_unset();  // Remove all session variables
         session_destroy(); // Destroy the session
         // Redirect to home page
-        redirect("/home"); 
+        redirect("home"); 
     }
 
     public function authenticate()
@@ -74,9 +75,9 @@ class Auth
                 $_SESSION["user_name"] = $user["name"]; // Store name for navbar display
 
             if ($user['role'] === 'admin') {
-                header("Location: " . ROOT . "/admin/dashboard");
+                header("Location: " . ROOT . "/admin/index");
             } else {
-                header("Location: " . ROOT . "/home");
+                header("Location: " . ROOT . "/auth/profile");
             }
             exit;
             
@@ -117,7 +118,7 @@ class Auth
             }
 
             // Validate email
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            if (filter_var($email, FILTER_VALIDATE_EMAIL) == false) {
                 $errors[] = "Invalid email format.";
             } elseif ($userModel->emailExists($email)) {
                 $errors[] = "Email is already registered.";
@@ -158,11 +159,62 @@ class Auth
             ]);
 
             // Redirect to login
-            redirect("auth/login");
+            //redirect("auth/login");
+            $_SESSION["show_login_modal"] = true;
+            redirect("home");
+
         }
 
         // Reload view with errors (if any)
         $this->view("auth/register", ["errors" => $errors]);
+    }
+
+    public function profile()
+    {
+        if (!isset($_SESSION["user_id"])) {
+            $_SESSION['flash_message'] = "Log in to access that page.!";
+            header("Location: " . ROOT . "/home");
+            exit;
+        }
+        $borrowModel = new Borrow();
+        $user_id = $_SESSION["user_id"];
+        $borrowed_books = $borrowModel->getUserBorrowedBooks($user_id);
+        $this->view("auth/profile",['borrowed_books' => $borrowed_books]);
+    }
+
+    public function borrow_book()
+    {
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION["user_id"])) {
+            $user_id = $_SESSION["user_id"];
+            $book_id = $_POST["book_id"];
+
+            $borrowModel = new BorrowedBook();
+            $due_date = date("Y-m-d", strtotime("+14 days"));
+
+            $borrowModel->create([
+                "user_id" => $user_id,
+                "book_id" => $book_id,
+                "borrowed_at" => date("Y-m-d"),
+                "due_date" => $due_date,
+                "status" => "borrowed"
+            ]);
+
+            header("Location: " . ROOT . "/auth/profile");
+            exit;
+        }
+    }
+
+    public function return_book()
+    {
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION["user_id"])) {
+            $borrow_id = $_POST["borrow_id"];
+            $borrowModel = new BorrowedBook();
+            
+            $borrowModel->update($borrow_id, ["status" => "returned"]);
+
+            header("Location: " . ROOT . "/auth/profile");
+            exit;
+        }
     }
 
 }

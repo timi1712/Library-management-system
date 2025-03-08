@@ -34,9 +34,16 @@ class Database
     public function query($sql, $params = [])
     {
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($params);
+        if (!empty($params) && is_array($params)) { 
+            $stmt->execute($params); // Ensure $params is an array
+        } else {
+            $stmt->execute();
+        }
+        return $stmt;
+        // $stmt = $this->pdo->prepare($sql);
+        // $stmt->execute($params);
     
-        return $stmt; // Always return PDOStatement
+        // return $stmt; // Always return PDOStatement
     }
     
 
