@@ -20,5 +20,25 @@ class Home
 
         $this->view("layouts/main", $data);
     }
+
+    public function search()
+    {
+        if (isset($_GET['query'])) {
+            $query = trim($_GET['query']);
+
+            $bookModel = new Book();
+            $books = $bookModel->searchBooks($query); // Search function in the model
+
+            $data = [
+                "books" => $books,
+                "search_query" => $query
+            ];
+
+            $this->view("books/search_results", $data);
+        } else {
+            redirect(ROOT . "/home");
+        }
+
+    }
 }
 ?>

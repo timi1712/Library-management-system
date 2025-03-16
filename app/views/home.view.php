@@ -30,7 +30,19 @@
                     <img src="<?= ROOT ?>/<?= $book['image'] ?>" class="card-img-top" alt="<?= $book['title'] ?>" style="height: 200px; object-fit: cover;">
                     <div class="card-body text-center">
                         <h5 class="card-title my-color"><?= $book['title'] ?></h5>
-                        <a href="<?= ROOT ?>/books/detail/<?= $book['id'] ?>" class="btn custom-bg text-white">View Book</a>
+                        <!-- If user is NOT logged in, show only "View Book" -->
+                    <?php if (!isset($_SESSION['user_id'])) : ?>
+                    <a href="<?= ROOT ?>/books/detail/<?= $book['id'] ?>" class="btn custom-bg text-white">View Book</a>
+                    <?php else : ?>
+                    <!-- If user IS logged in, show only "Borrow" -->
+                    <form action="<?= ROOT ?>/books/borrowBook" method="POST">
+                        <input type="hidden" name="book_id" value="<?= $book['id'] ?>">
+                        <button type="submit" class="btn btn-success">Borrow</button>
+                    </form>
+                    <?php endif; ?>
+                        
+                        
+           
                     </div>
                 </div>
             </div>

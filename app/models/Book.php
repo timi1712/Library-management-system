@@ -64,7 +64,6 @@ class Book extends Model
     }
     public function getAllBooks()
     {
-       // return $this->findAll();
        return $this->db->query("SELECT * FROM books")->fetchAll(PDO::FETCH_ASSOC);
     }
     public function getBookById($id)
@@ -76,13 +75,13 @@ class Book extends Model
     }
     public function getBooksByCategory($categoryId)
     {
-        return $this->query("SELECT * FROM books WHERE category_id = ?", [$categoryId]);
+        return $this->db->query("SELECT * FROM books WHERE category_id = ?", [$categoryId])->fetchAll();
     }
 
     public function searchBooks($query)
     {
-        $sql = "SELECT * FROM books WHERE title LIKE :query OR author LIKE :query";
-        return $this->query($sql, [':query' => "%$query%"]);
+        $sql = "SELECT * FROM books WHERE title LIKE :query OR author LIKE :query OR isbn LIKE :query";
+        return $this->db->query($sql, [':query' => "%$query%"]);
     }
 
     public function getBookCount()

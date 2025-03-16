@@ -2,6 +2,7 @@
 require_once dirname(__DIR__) . "/models/User.php";
 require_once dirname(__DIR__) . "/models/Category.php";
 require_once dirname(__DIR__) . "/models/Book.php";
+require_once dirname(__DIR__) . "/models/Borrow.php";
 
 
 class Admin
@@ -17,9 +18,19 @@ class Admin
     {
         $userModel = new User();
         $bookModel = new Book();
+        $borrowModel = new Borrow();
+
         $userCount = $userModel->getUserCount();
         $bookCount = $bookModel->getBookCount();
-        $this->view("admin/dashboard",["userCount" => $userCount,"bookCount" => $bookCount]);
+        $issuedBooks = $borrowModel->getIssuedBooksCount(); 
+        $borrowedBooksCount = $borrowModel->getBorrowedBooksCount();
+        // Calculate Available Books (Total Books - Borrowed Books)
+        $availableBooks = max(0, $bookCount - $borrowedBooksCount);
+        $this->view("admin/dashboard",
+        ["userCount" => $userCount,
+        "bookCount" => $bookCount,
+        "availableBooks" => $availableBooks,
+        "borrowedBooksCount" => $borrowedBooksCount]);
     }
 
     public function users()
@@ -542,6 +553,15 @@ class Admin
             }
         }
     }
+
+    public function borrowedBooks()
+    {
+        $borrowModel = new Borrow();
+        $borrowedBooks = $borrowModel->getBorrowedBooks();
+
+        $this->view('admin/borrowed_books', ['borrowedBooks' => $borrowedBooks]);
+    }
+
     
 
 }

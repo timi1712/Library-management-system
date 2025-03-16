@@ -94,7 +94,7 @@
         </div>
     </nav>
     <div class="container mt-3">
-    <form action="<?= ROOT ?>/book/search" method="GET" class="d-flex">
+    <form action="<?= ROOT ?>/home/search" method="GET" class="d-flex">
         <input class="form-control me-2" type="text" name="query" placeholder="Search for books..." required>
         <button class="btn custom-bg text-white" type="submit">
         <span class="bi-search"></span>

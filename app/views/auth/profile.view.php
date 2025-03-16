@@ -5,7 +5,7 @@
 
     <h4 class="my-color">Borrowed Books</h4>
 
-    <?php if (!empty($borrowedBooks)): ?>
+    <?php if (!empty($borrowed_books)): ?>
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -17,12 +17,12 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($borrowedBooks as $book): ?>
+                <?php foreach ($borrowed_books as $book): ?>
                     <tr>
                         <td><?= htmlspecialchars($book['title']) ?></td>
                         <td><?= htmlspecialchars($book['author']) ?></td>
-                        <td><?= htmlspecialchars($book['isbn']) ?></td>
-                        <td><?= htmlspecialchars($book['due_date']) ?></td>
+                        <td><?= isset($book['isbn']) ? htmlspecialchars($book['isbn']) : 'N/A'; ?></td>
+                        <td><?= htmlspecialchars($book['return_date']) ?></td>
                         <td>
                             <a href="<?= ROOT ?>/user/return/<?= $book['id'] ?>" class="btn btn-sm btn-danger">Return</a>
                         </td>

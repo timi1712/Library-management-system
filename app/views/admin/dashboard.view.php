@@ -7,7 +7,7 @@
     <div class="col-md-10">
     <!-- Stats Section -->
     <div class="row text-center">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body">
                     <i class="bi bi-book display-4 text-primary"></i>
@@ -17,7 +17,7 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body">
                     <i class="bi bi-people-fill display-4 text-success"></i>
@@ -27,19 +27,29 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body">
                     <i class="bi bi-journal-check display-4 text-warning"></i>
-                    <h5 class="mt-3">Books Issued</h5>
-                    <h3><?= $issuedBooks ?? 0; ?></h3>
+                    <h5 class="mt-3">Available Books</h5>
+                    <h3><?= $availableBooks ?? 0; ?></h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                    <i class="bi bi-clipboard-data display-4 text-danger"></i>
+                    <h5 class="mt-3">Borrowed Books</h5>
+                    <h3><?= $borrowedBooksCount ?? 0; ?></h3>
+                    <a href="<?= ROOT ?>/admin/borrowedBooks" class="btn btn-danger mt-2">View Report</a>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Management Panels -->
-    <div class="row">
+    <div class="row mb-5">
         <div class="col-md-6">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body text-center">

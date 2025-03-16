@@ -1,6 +1,6 @@
 <?php
 require_once dirname(__DIR__) . "/models/User.php"; 
-//require_once dirname(__DIR__) . "/models/Borrow.php";
+require_once dirname(__DIR__) . "/models/Borrow.php";
 
 class Auth
 {
