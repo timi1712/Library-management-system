@@ -4,7 +4,7 @@
     <h3>Search Results for "<?= htmlspecialchars($search_query) ?>"</h3>
     <hr>
  
-    <?php if (!empty($books)): ?>
+    <?php if (!empty($books) && is_array($books)): ?>
         <div class="row">
             <?php foreach ($books as $book): ?>
                 <div class="col-md-2">
@@ -20,7 +20,7 @@
             <?php endforeach; ?>
         </div>
     <?php else: ?>
-        <p class="text-muted">No books found matching your search.</p>
+        <h4 class="text-muted text-center">No books found matching your search.</h4>
     <?php endif; ?>
     <div class="row"></div>
 </div>

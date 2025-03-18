@@ -21,6 +21,16 @@ class Borrow extends Model
         return $this->db->query($query)->fetch()['count'] ?? 0;
     }
 
+    public function countBorrowedBooks()
+    {
+        $query = "SELECT COUNT(*) AS total FROM borrowed_books"; 
+        $stmt = $this->db->query($query);
+        // Fetch the result as an associative array
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'] ?? 0;
+    }
+
+
     public function getIssuedBooksCount()
     {
         $query = "SELECT COUNT(*) AS count FROM borrowed_books";
@@ -29,19 +39,61 @@ class Borrow extends Model
 
     public function returnBook($borrow_id)
     {
-        $query = "UPDATE borrowed_books SET status = 'returned', returned_at = NOW() WHERE id = :id";
+        $sql = "UPDATE borrowed_books SET status = :status, return_date = NOW() WHERE id = :id";
 
-        return $this->db->query($query,$borrow_id);
+        return $this->db->query($sql, [
+            'status' => 'returned',
+            'id' => $borrow_id
+        ]);
     }
 
-    public function getUserBorrowedBooks($user_id)
+    public function findById($borrow_id)
     {
-        $query = "SELECT b.id, bk.title, bk.author, b.return_date, b.status
-                  FROM borrowed_books b
-                  JOIN books bk ON b.book_id = bk.id
-                  WHERE b.user_id = user_id";
+        $query = "SELECT * FROM borrowed_books WHERE id = ?";
+        return $this->db->query($query, [$borrow_id])->fetch();
+    }
 
-        return $this->db->query($query,$user_id)->fetchAll();
+
+    public function getUserBorrowedBooks($user_id, $limit, $offset)
+    {
+        $query = "
+            SELECT b.id, b.title, b.author, b.isbn, bb.return_date, bb.status
+            FROM borrowed_books bb
+            JOIN books b ON bb.book_id = b.id
+            WHERE bb.user_id = :user_id
+            ORDER BY bb.return_date DESC
+            LIMIT " . intval($limit) . " OFFSET " . intval($offset);
+    
+        return $this->db->query($query, ['user_id' => $user_id])->fetchAll();
+    }
+    
+
+    public function countUserBorrowedBooks($user_id)
+    {
+        $query = "SELECT COUNT(*) as total FROM borrowed_books WHERE user_id = :user_id";
+        return $this->db->query($query, ['user_id' => $user_id])->fetch()["total"];
+    }
+
+
+    public function getBorrowedBooks($limit, $offset)
+    {
+        $query = "SELECT 
+                    books.id, 
+                    books.title, 
+                    books.image, 
+                    bb.status,
+                    bb.return_date,
+                    u.name AS user_name
+                    FROM borrowed_books bb
+                    JOIN books ON bb.book_id = books.id
+                    JOIN users u ON bb.user_id = u.id
+                    ORDER BY bb.borrow_date DESC
+                    LIMIT $limit OFFSET $offset
+                ";
+
+    return $this->db->query($query);
+
+    
     }
 
     public function checkOverdueBooks()

@@ -34,16 +34,21 @@ class Database
     public function query($sql, $params = [])
     {
         $stmt = $this->pdo->prepare($sql);
+        // $stmt->bindValue(':limit', $params['limit'], PDO::PARAM_INT);
+        // $stmt->bindValue(':offset', $params['offset'], PDO::PARAM_INT);
+        //$stmt->execute();
+        //$stmt->execute([$limit, $offset]);
+        
         if (!empty($params) && is_array($params)) { 
             $stmt->execute($params); // Ensure $params is an array
         } else {
             $stmt->execute();
         }
-        return $stmt;
+        //return $stmt->fetchAll(PDO::FETCH_ASSOC);
         // $stmt = $this->pdo->prepare($sql);
         // $stmt->execute($params);
     
-        // return $stmt; // Always return PDOStatement
+        return $stmt; // Always return PDOStatement
     }
     
 

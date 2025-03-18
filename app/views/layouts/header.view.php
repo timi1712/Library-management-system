@@ -94,14 +94,26 @@
         </div>
     </nav>
     <div class="container mt-3">
-    <form action="<?= ROOT ?>/home/search" method="GET" class="d-flex">
-        <input class="form-control me-2" type="text" name="query" placeholder="Search for books..." required>
-        <button class="btn custom-bg text-white" type="submit">
-        <span class="bi-search"></span>
-        </button>
-    </form>
-</div>
-
+        <form action="<?= ROOT ?>/home/search" method="GET" class="d-flex">
+            <input class="form-control me-2" type="text" name="query" placeholder="Search for books..." required>
+            <button class="btn custom-bg text-white" type="submit">
+            <span class="bi-search"></span>
+            </button>
+        </form>
+    </div>
+    <?php if (isset($_SESSION["flash_message"])) : ?>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+        Swal.fire({
+            icon: "<?= $_SESSION['flash_message']['type'] ?>", 
+            title: "<?= $_SESSION['flash_message']['message'] ?>",
+            showConfirmButton: false,
+            timer: 2500
+        });
+    });
+    </script>
+    <?php unset($_SESSION["flash_message"]); ?>
+<?php endif; ?>
 </header>
 <div class="my-10"></div>
 

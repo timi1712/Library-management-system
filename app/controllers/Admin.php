@@ -122,8 +122,7 @@ class Admin
         $books = $bookModel->getPaginatedBooks($itemsPerPage, $offset);
         $totalBooks = $bookModel->getTotalBooks();
         $totalPages = ceil($totalBooks / $itemsPerPage);
-        // Fetch categories for the select dropdown
-        //$categories = $categoryModel->getAllCategories();
+        
         $itemsPerCatPage = 5;
         $currentCatPage = isset($_GET['page'])?(int)$_GET['page'] : 1;
         $offsetCat = ($currentCatPage - 1) * $itemsPerCatPage;
@@ -160,11 +159,11 @@ class Admin
     public function store_book()
     {
         $errors = [];
-        $bookModel = new Book();
-        $categoryModel = new Category();
-        $categories = $categoryModel->getAllCategories();
 
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $bookModel = new Book();
+            $categoryModel = new Category();
+            $categories = $categoryModel->getAllCategories();
             $data = [
                 "title" => trim($_POST["title"]),
                 "author" => trim($_POST["author"]),
@@ -172,7 +171,8 @@ class Admin
                 "category_id" => trim($_POST["category_id"]),
                 "published_year" => trim($_POST["published_year"]),
                 "quantity" => trim($_POST["quantity"]),
-                "image" => trim($_POST["image"] ?? "") // Optional field
+                "image" => trim($_POST["image"] ?? ""),
+                "description" => trim($_POST["description"])
             ];
 
             // Validate required fields
@@ -219,7 +219,7 @@ class Admin
             }
             // Save book to database
             if ($bookModel->create($data)) {
-                $_SESSION["success"] = "Book added successfully!";
+                $_SESSION["flash_message"] = ["type" => "success", "message" => "Book added successfully!"];
                 header("Location: " . ROOT . "/admin/books");
                 exit;
             } else {
@@ -283,6 +283,7 @@ class Admin
             $published_year = trim($_POST["published_year"]);
             $quantity = trim($_POST["quantity"]);
             $current_image = $_POST["current_image"] ?? "";
+            $description = $_POST["description"];
 
               // Image Upload Handling
             //   if (!empty($_FILES["image"]["name"])) {
@@ -399,7 +400,8 @@ class Admin
                 "category_id" => $category_id,
                 "published_year" => $published_year,
                 "quantity" => $quantity,
-                "image" => $image_name  // Now stores "uploads/books/imagename.jpg"
+                "image" => $image_name, // Now stores "uploads/books/imagename.jpg"
+                "description" => $description
             ];
             
     
@@ -557,9 +559,21 @@ class Admin
     public function borrowedBooks()
     {
         $borrowModel = new Borrow();
-        $borrowedBooks = $borrowModel->getBorrowedBooks();
+        $limit = 3; // Books per page
+        $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+        $borrowedBooks = $borrowModel->getBorrowedBooks($limit, $offset);
 
-        $this->view('admin/borrowed_books', ['borrowedBooks' => $borrowedBooks]);
+        $totalBooks = $borrowModel->countBorrowedBooks(); // Function to get total borrowed books count
+        //$totalPages = ceil($totalBooks / $limit);
+        $totalPages = ($totalBooks > 0) ? ceil($totalBooks / $limit) : 1;
+
+
+
+        $this->view('admin/borrowed_books', [
+            'borrowedBooks' => $borrowedBooks,
+            'totalPages' => $totalPages,
+            'currentPage' => $page]);
     }
 
     

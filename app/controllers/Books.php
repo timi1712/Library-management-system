@@ -5,6 +5,7 @@ require_once dirname(__DIR__) . "/models/Book.php";
 require_once dirname(__DIR__) . "/models/Borrow.php";
 require_once dirname(__DIR__) . "/models/User.php";
 
+
 class Books
 {
     use Controller;
@@ -19,7 +20,6 @@ class Books
 
     public function borrowBook()
     {
-        //echo "Debug: ". htmlspecialchars($_SESSION['user_id']);
 
         if (!isset($_SESSION['user_id'])) {
             $_SESSION['flash_message'] = "You must be logged in to borrow a book.";
@@ -34,15 +34,15 @@ class Books
 
                 // Debugging
             if (empty($user_id) || empty($book_id)) {
-                $_SESSION['flash_message'] = "Invalid user or book ID.";
+                $_SESSION['flash_message'] = ["type" => "info", "message" => "Invalid user or book ID."];
                 header("Location: " . ROOT . "/home");
                 exit();
             }
 
             //Check if the book is already borrowed
             if ($borrowModel->isBookBorrowed($user_id, $book_id)) {
-                $_SESSION['flash_message'] = "You have already borrowed this book.";
-                header("Location: " . ROOT . "/home");
+                $_SESSION['flash_message'] = ["type" => "warning", "message" => "You have already borrowed this book."];
+                header("Location: " . ROOT . "/auth/profile");
                 exit();
             }
             // Attempt to borrow the book
@@ -51,12 +51,12 @@ class Books
                 header("Location: " . ROOT . "/auth/profile"); // Redirect to profile or books page
                 exit();
             } else {
-                $_SESSION['flash_message'] = "Failed to borrow book.";
-                header("Location: " . ROOT . "home");
+                $_SESSION['flash_message'] = ["type" => "error", "message" => "Failed to borrow book."];
+                header("Location: " . ROOT . "/auth/profile");
                 exit();
             }
         } else {
-            $_SESSION['flash_message'] = "Invalid request.";
+            $_SESSION['flash_message'] = ["type" => "info", "message" => "Invalid request."];
             header("Location: " . ROOT . "home");
             exit();
         }
@@ -100,5 +100,15 @@ class Books
         } else {
             redirect(ROOT . "/home");
         }
+    }
+
+    public function detail($id)
+    {
+        $bookModel = new Book();
+        $book = $bookModel->getBookById($id);
+        if (!$book) {
+            $_SESSION["flash_message"] = ["type" => "error", "message" => "Book not found!."];
+        }
+        $this->view("books/details", ["book" => $book]);
     }
 }

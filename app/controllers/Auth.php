@@ -1,6 +1,7 @@
 <?php
 require_once dirname(__DIR__) . "/models/User.php"; 
 require_once dirname(__DIR__) . "/models/Borrow.php";
+require_once dirname(__DIR__) . "/models/Book.php";
 
 class Auth
 {
@@ -177,9 +178,25 @@ class Auth
             exit;
         }
         $borrowModel = new Borrow();
+        $bookModel = new Book();
         $user_id = $_SESSION["user_id"];
-        $borrowed_books = $borrowModel->getUserBorrowedBooks($user_id);
-        $this->view("auth/profile",['borrowed_books' => $borrowed_books]);
+         // Pagination Logic
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = 3; // Number of books per page
+        $offset = ($page - 1) * $limit;
+
+        $total_books = $borrowModel->countUserBorrowedBooks($user_id);
+        $borrowed_books = $borrowModel->getUserBorrowedBooks($user_id, $limit, $offset);
+
+        $total_pages = ceil($total_books / $limit);
+
+        $borrowed_books = $borrowModel->getUserBorrowedBooks($user_id, $limit, $offset);
+        $available_books = $bookModel->getAvailableBooks(); 
+        $this->view("auth/profile",[
+            'borrowed_books' => $borrowed_books, 
+            "available_books" => $available_books, 
+            "total_pages" => $total_pages,
+            "current_page" => $page]);
     }
 
     public function borrow_book()
@@ -188,29 +205,43 @@ class Auth
             $user_id = $_SESSION["user_id"];
             $book_id = $_POST["book_id"];
 
-            $borrowModel = new BorrowedBook();
-            $due_date = date("Y-m-d", strtotime("+14 days"));
+            $borrowModel = new Borrow();
+            //$bookModel = new Book();
+            //Check if the book is already borrowed
+            if ($borrowModel->isBookBorrowed($user_id, $book_id)) {
+                $_SESSION['flash_message'] = ["type" => "warning", "message" => "You have already borrowed this book."];
+                header("Location: " . ROOT . "/auth/profile");
+                exit();
+            }
 
-            $borrowModel->create([
-                "user_id" => $user_id,
-                "book_id" => $book_id,
-                "borrowed_at" => date("Y-m-d"),
-                "due_date" => $due_date,
-                "status" => "borrowed"
-            ]);
-
+           if ( $borrowModel->borrowBook($user_id,$book_id)) {
+                $_SESSION['flash_message'] = ["type" => "success", "message" => "Book borrowed successfully!"];
+                header("Location: " . ROOT . "/auth/profile"); // Redirect to profile or books page
+                exit();
+           }else {
+            $_SESSION['flash_message'] = ["type" => "error", "message" => "Failed to borrow book."];
             header("Location: " . ROOT . "/auth/profile");
-            exit;
+            exit();
         }
+    }else {
+        $_SESSION['flash_message'] = "Invalid request.";
+        header("Location: " . ROOT . "home");
+        exit();
     }
+}
 
-    public function return_book()
+    public function return()
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION["user_id"])) {
             $borrow_id = $_POST["borrow_id"];
-            $borrowModel = new BorrowedBook();
-            
-            $borrowModel->update($borrow_id, ["status" => "returned"]);
+
+            $borrowModel = new Borrow();
+
+            if ($borrowModel->returnBook($borrow_id)) {
+                $_SESSION['flash_message'] = ["type" => "success", "message" => "Successfully returned book."];
+            } else {
+                $_SESSION['errors'] = ["type" => "error", "message" => "Invalid return request."];
+            }
 
             header("Location: " . ROOT . "/auth/profile");
             exit;

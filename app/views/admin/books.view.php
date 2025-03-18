@@ -6,7 +6,7 @@
             title: "Success!",
             text: "<?php echo $_SESSION['flash_message']; ?>",
             showConfirmButton: false,
-            timer: 2000
+            timer: 2500
         });
     </script>
     <?php unset($_SESSION["flash_message"]); ?>
@@ -141,45 +141,49 @@
 
     <form action="<?= ROOT ?>/admin/store_book" method="POST" enctype="multipart/form-data">
         <div class="row">
-        <div class="col-md-3">
-            <label class="form-label">Title</label>
-            <input type="text" name="title" class="form-control" required>
-        </div>
-        <div class="col-md-3">
-            <label class="form-label">Author</label>
-            <input type="text" name="author" class="form-control" required>
-        </div>
-        <div class="col-md-3">
-            <label class="form-label">ISBN</label>
-            <input type="text" name="isbn" class="form-control" required>
-        </div>
-        <div class="col-md-3">
-            <label class="form-label">Category</label>
-            <?php if (!empty($categories) && is_array($categories)): ?>
-            <select name="category_id" class="form-control" required>
-                <option value="">Select a Category</option>
-                <?php foreach ($categories as $category): ?>
-                    <option value="<?= $category['id'] ?>"><?= htmlspecialchars($category['name']) ?></option>
-                <?php endforeach; ?>
-            </select>
-            <?php else: ?>
-            <p>No categories found. Please add categories first.</p>
-            <?php endif; ?>
-        </div>
+            <div class="col-md-3">
+                <label class="form-label">Title</label>
+                <input type="text" name="title" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Author</label>
+                <input type="text" name="author" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">ISBN</label>
+                <input type="text" name="isbn" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Category</label>
+                <?php if (!empty($categories) && is_array($categories)): ?>
+                <select name="category_id" class="form-control" required>
+                    <option value="">Select a Category</option>
+                    <?php foreach ($categories as $category): ?>
+                        <option value="<?= $category['id'] ?>"><?= htmlspecialchars($category['name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <?php else: ?>
+                <p>No categories found. Please add categories first.</p>
+                <?php endif; ?>
+            </div>
         </div>
         <div class="row">
-        <div class="col-md-4">
-            <label class="form-label">Published Year</label>
-            <input type="number" name="published_year" class="form-control" required>
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">Quantity</label>
-            <input type="number" name="quantity" class="form-control" required>
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">Cover Image</label>
-            <input type="file" name="image" class="form-control">
-        </div>
+            <div class="col-md-2">
+                <label class="form-label">Published Year</label>
+                <input type="number" name="published_year" class="form-control" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Quantity</label>
+                <input type="number" name="quantity" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Cover Image</label>
+                <input type="file" name="image" class="form-control">
+            </div>
+            <div class="col-md-5">
+            <label for="description">Description</label>
+            <textarea class="form-control" id="description" rows="5"></textarea>
+            </div>
         </div>
         <div class="my-3">
         <button type="submit" class="btn custom-bg text-white">Add Book</button>

@@ -45,15 +45,16 @@ class Book extends Model
         if (!$this->isValidISBN($data['isbn'])) {
             return false; // Prevent insertion if ISBN is invalid
         }
-        $sql = "INSERT INTO books (title, author, isbn, category_id, published_year, quantity, image) 
-                VALUES (:title, :author, :isbn, :category_id, :published_year, :quantity, :image)";
+        $sql = "INSERT INTO books (title, author, isbn, category_id, published_year, quantity, image, description) 
+                VALUES (:title, :author, :isbn, :category_id, :published_year, :quantity, :image, :description)";
         return $this->db->query($sql, $data);
     }
 
     public function update($id, $data)
     {
         $sql = "UPDATE books SET title = :title, author = :author, isbn = :isbn,
-                category_id = :category_id, published_year = :published_year, quantity = :quantity, image = :image 
+                category_id = :category_id, published_year = :published_year, quantity = :quantity, image = :image,
+                description = :description
                 WHERE id = :id";
         $data['id'] = $id;
         return $this->db->query($sql, $data);
@@ -73,22 +74,45 @@ class Book extends Model
 
         return $result ? $result->fetch(PDO::FETCH_ASSOC) : null; 
     }
+
+    public function getAvailableBooks()
+    {
+        $query = "
+            SELECT books.id, books.title, books.author, books.quantity 
+            FROM books
+            LEFT JOIN (
+                SELECT book_id, COUNT(*) as borrowed_count
+                FROM borrowed_books 
+                WHERE status = 'borrowed' OR status = 'overdue'
+                GROUP BY book_id
+            ) as borrowed ON books.id = borrowed.book_id
+            WHERE books.quantity > COALESCE(borrowed.borrowed_count, 0)
+        ";
+
+        return $this->db->query($query)->fetchAll();
+    }
+
     public function getBooksByCategory($categoryId)
     {
         return $this->db->query("SELECT * FROM books WHERE category_id = ?", [$categoryId])->fetchAll();
     }
 
+
     public function searchBooks($query)
     {
-        $sql = "SELECT * FROM books WHERE title LIKE :query OR author LIKE :query OR isbn LIKE :query";
-        return $this->db->query($sql, [':query' => "%$query%"]);
+        $sql = "SELECT * FROM books WHERE title LIKE ? OR author LIKE ? OR isbn LIKE ?";
+        $params = ["%$query%", "%$query%", "%$query%"];
+
+        $results = $this->db->query($sql, $params)->fetchAll();
+
+        return $results ?: [];
     }
+
 
     public function getBookCount()
     {
-        $query = "SELECT COUNT(*) as count FROM books";
-        $stmt = $this->db->query($query);
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $query = "SELECT SUM(quantity) AS count FROM books";
+        $result = $this->db->query($query)->fetch();
         return $result['count'] ?? 0;
     }
     public function getPaginatedBooks($limit, $offset)
