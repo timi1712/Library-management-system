@@ -63,4 +63,17 @@ class Database
     {
         return $this->pdo->lastInsertId();
     }
+
+    //Add transaction support
+    public function beginTransaction() {
+        return $this->pdo->beginTransaction();
+    }
+
+    public function commit() {
+        return $this->pdo->commit();
+    }
+
+    public function rollBack() {
+        return $this->pdo->rollBack();
+    }
 }

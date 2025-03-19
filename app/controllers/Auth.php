@@ -3,6 +3,8 @@ require_once dirname(__DIR__) . "/models/User.php";
 require_once dirname(__DIR__) . "/models/Borrow.php";
 require_once dirname(__DIR__) . "/models/Book.php";
 
+
+
 class Auth
 {
     use Controller;
@@ -186,7 +188,7 @@ class Auth
         $offset = ($page - 1) * $limit;
 
         $total_books = $borrowModel->countUserBorrowedBooks($user_id);
-        $borrowed_books = $borrowModel->getUserBorrowedBooks($user_id, $limit, $offset);
+        //$borrowed_books = $borrowModel->getUserBorrowedBooks($user_id, $limit, $offset);
 
         $total_pages = ceil($total_books / $limit);
 
@@ -232,12 +234,18 @@ class Auth
 
     public function return()
     {
+        error_log("Return request received for borrow_id: " . $_POST["borrow_id"]);
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION["user_id"])) {
+            if (!isset($_POST["borrow_id"]) || empty($_POST["borrow_id"])) {
+                die("Error: borrow_id not received in POST request.");
+            }
             $borrow_id = $_POST["borrow_id"];
-
+            
             $borrowModel = new Borrow();
 
+
             if ($borrowModel->returnBook($borrow_id)) {
+
                 $_SESSION['flash_message'] = ["type" => "success", "message" => "Successfully returned book."];
             } else {
                 $_SESSION['errors'] = ["type" => "error", "message" => "Invalid return request."];

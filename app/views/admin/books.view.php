@@ -182,7 +182,7 @@
             </div>
             <div class="col-md-5">
             <label for="description">Description</label>
-            <textarea class="form-control" id="description" rows="5"></textarea>
+            <textarea class="form-control" id="description" name="description" rows="5"></textarea>
             </div>
         </div>
         <div class="my-3">

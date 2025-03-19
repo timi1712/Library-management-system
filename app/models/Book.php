@@ -45,8 +45,8 @@ class Book extends Model
         if (!$this->isValidISBN($data['isbn'])) {
             return false; // Prevent insertion if ISBN is invalid
         }
-        $sql = "INSERT INTO books (title, author, isbn, category_id, published_year, quantity, image, description) 
-                VALUES (:title, :author, :isbn, :category_id, :published_year, :quantity, :image, :description)";
+        $sql = "INSERT INTO books (title, author, isbn, category_id, published_year, quantity, description, image) 
+                VALUES (:title, :author, :isbn, :category_id, :published_year, :quantity, :description, :image)";
         return $this->db->query($sql, $data);
     }
 

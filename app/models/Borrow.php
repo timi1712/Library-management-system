@@ -37,15 +37,46 @@ class Borrow extends Model
         return $this->db->query($query)->fetch()['count'] ?? 0;
     }
 
+
     public function returnBook($borrow_id)
     {
-        $sql = "UPDATE borrowed_books SET status = :status, return_date = NOW() WHERE id = :id";
+        $db = Database::getInstance();
 
-        return $this->db->query($sql, [
-            'status' => 'returned',
-            'id' => $borrow_id
-        ]);
+        try {
+            // Start transaction
+            $db->beginTransaction();
+
+            // Check if the borrow_id exists in the borrowed_books table
+            $checkSql = "SELECT * FROM borrowed_books WHERE book_id = :book_id";
+            $stmt = $db->query($checkSql, ['book_id' => $borrow_id]);
+            $borrowed = $stmt->fetch();
+
+            // Debugging: Check if the row exists
+            if (!$borrowed) {
+                error_log("Error: Borrowed book entry with borrow_id $borrow_id not found.");
+                throw new Exception("Error: Borrowed book entry not found.");
+            }
+
+            error_log("Borrowed Book Found: " . json_encode($borrowed));
+
+            // Update the book status
+            $updateSql = "UPDATE borrowed_books SET status = :status, return_date = NOW() WHERE book_id = :book_id";
+            $db->query($updateSql, [
+                'status' => 'returned',
+                'book_id' => $borrow_id
+            ]);
+
+            // Commit transaction
+            $db->commit();
+            return true;
+        } catch (Exception $e) {
+            // Rollback on failure
+            $db->rollBack();
+            error_log("Transaction failed: " . $e->getMessage());
+            die($e->getMessage()); // Debugging: Print error message
+        }
     }
+
 
     public function findById($borrow_id)
     {
@@ -53,19 +84,21 @@ class Borrow extends Model
         return $this->db->query($query, [$borrow_id])->fetch();
     }
 
-
     public function getUserBorrowedBooks($user_id, $limit, $offset)
     {
         $query = "
-            SELECT b.id, b.title, b.author, b.isbn, bb.return_date, bb.status
+            SELECT bb.id AS borrow_id, b.id AS book_id, 
+                b.title, b.author, b.isbn, 
+                bb.return_date, bb.status
             FROM borrowed_books bb
             JOIN books b ON bb.book_id = b.id
             WHERE bb.user_id = :user_id
             ORDER BY bb.return_date DESC
             LIMIT " . intval($limit) . " OFFSET " . intval($offset);
-    
+        
         return $this->db->query($query, ['user_id' => $user_id])->fetchAll();
     }
+
     
 
     public function countUserBorrowedBooks($user_id)

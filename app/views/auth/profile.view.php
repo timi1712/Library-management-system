@@ -38,13 +38,13 @@
                     <td>
                     <?php if ($book['status'] === 'borrowed' || $book['status'] === 'overdue'): ?>
                         <form action="<?= ROOT ?>/auth/return" method="POST" style="display:inline;">
-                            <input type="hidden" name="borrow_id" value="<?= $book['id'] ?>">
+                            <input type="hidden" name="borrow_id" value="<?= htmlspecialchars($book['book_id']) ?>">
                             <button type="submit" class="btn btn-sm btn-danger">
                                 <?= $book['status'] === 'overdue' ? "Return (Overdue)" : "Return" ?>
                             </button>
                         </form>
                     <?php else: ?>
-                        <span class="text-muted">Returned</span>
+                        <span class="text-muted">Returned</span> 
                     <?php endif; ?>
                 </td>
 
