@@ -32,7 +32,7 @@
                         <h5 class="card-title my-color"><?= $book['title'] ?></h5>
                         <!-- If user is NOT logged in, show only "View Book" -->
                     <?php if (!isset($_SESSION['user_id'])) : ?>
-                    <a href="<?= ROOT ?>/books/detail/<?= $book['id'] ?>" class="btn custom-bg text-white">View Book</a>
+                    <a href="<?= ROOT ?>/books/detail/<?= $book['id'] ?>" class="btn custom-bg text-white">Details</a>
                     <?php else : ?>
                     <!-- If user IS logged in, show only "Borrow" -->
                     <form action="<?= ROOT ?>/books/borrowBook" method="POST">
@@ -81,7 +81,35 @@
 <?php else : ?>
     <p>No categories available.</p>
 <?php endif; ?>
+ <!-- Pagination -->
+ <div class="d-flex justify-content-center">
+                    <!-- Pagination Controls -->
+                    <nav>
+                        <ul class="pagination">
+                            <!-- Previous Button -->
+                            <li class="page-item <?= ($currentPage <= 1) ? 'disabled' : '' ?>">
+                                <a class="page-link" href="?page=<?= max(1, $currentPage - 1) ?>" aria-label="Previous">
+                                    <i class="fas fa-angle-left"></i> <!-- Left arrow -->
+                                </a>
+                            </li>
 
+                            <!-- Page Numbers -->
+                            <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
+                                <li class="page-item <?= ($i == $currentPage) ? 'active' : '' ?>">
+                                    <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                                </li>
+                            <?php endfor; ?>
+
+                            <!-- Next Button -->
+                            <li class="page-item <?= ($currentPage >= $totalPages) ? 'disabled' : '' ?>">
+                                <a class="page-link" href="?page=<?= min($totalPages, $currentPage + 1) ?>" aria-label="Next">
+                                    <i class="fas fa-angle-right"></i> <!-- Right arrow -->
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+        </div>
+        <!-- pagination -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("viewMoreCategories")?.addEventListener("click", function () {

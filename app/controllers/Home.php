@@ -9,11 +9,19 @@ class Home
         $categoryModel = new Category();
         $bookModel = new Book();
         $categories = $categoryModel->getAllCategories();
-        $books = $bookModel->getAllBooks();
+        $itemsPerPage = 8;
+        $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $offset = ($currentPage - 1) * $itemsPerPage;
+        $totalBooks = $bookModel->getTotalBooks();
+        $totalPages = ceil($totalBooks / $itemsPerPage);
+        $books = $bookModel->getPaginatedBooks($itemsPerPage, $offset);
+        
 
         $data = [
             "categories" => $categories,
-            "books" => $books
+            "books" => $books,
+            "totalPages" => $totalPages,
+            "currentPage" => $currentPage,
         ];
         // Load the home content and store it in $content
         $data["content"] = $this->view("home", $data, true); // Render as string

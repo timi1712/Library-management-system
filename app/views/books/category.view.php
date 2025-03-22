@@ -32,14 +32,14 @@
                         <img src="<?= ROOT ?>/<?= $book['image'] ?>" class="card-img-top" alt="<?= $book['title'] ?>" style="height: 200px; object-fit: cover;">
                         <div class="card-body text-center">
                             <h5 class="card-title my-color"><?= $book['title'] ?></h5>
-                            <a href="<?= ROOT ?>/books/detail/<?= $book['id'] ?>" class="btn custom-bg text-white">View Book</a>
+                            <a href="<?= ROOT ?>/books/detail/<?= $book['id'] ?>" class="btn custom-bg text-white">Details</a>
                         </div>
                     </div>
                 </div>
             <?php endforeach; ?>
     </div>
     <?php else : ?>
-            <p>No books available in this category.</p>
+            <h3 class="text-center">No books available in this category.</h3>
         <?php endif; ?>
 
 </div>
